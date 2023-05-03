@@ -54,15 +54,15 @@ def get_expenses(var_fixed):
 
         print()
         # get name, quantity and item
-        item_name = not_blank("Recipe name: ",
+        item_name = not_blank("Item name: ",
                               "The component name can't be blank.")
         if item_name.lower() == "xxx":
             break
 
-        quantity = num_check("Servings: ",
+        quantity = num_check("Quantity: ",
                              "The amount must be a whole number more than zero.",
                              int)
-        price = num_check("How much did you buy? $",
+        price = num_check("How much for a single item? $",
                           "The price must be a number <more than zero>",
                           float)
 
