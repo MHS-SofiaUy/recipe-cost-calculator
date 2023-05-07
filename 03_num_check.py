@@ -22,6 +22,7 @@ def num_check(question, error, num_type):
 
 
 # main routine goes here
+
 get_int = num_check("How much are you using in the recipe? ",
                     "Please enter an amount more than 0\n",
                     int)
