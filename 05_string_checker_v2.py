@@ -42,13 +42,19 @@ measurement_list = ["grams", "kilograms"]
 measurement_type = string_checker("What measurement is your ingredient in? (grams / kilograms)", 2,
                                   measurement_list)
 
-get_int = num_check("How much are you using in the recipe? ",
+get_int = num_check("How much did you get of this ingredient? ",
                     "Please enter an amount more than 0\n",
-                    int)
+                    float)
 
-get_cost = num_check("How much does it cost (for the amount you're using)? $",
+get_cost = num_check("How much does it cost (for the amount you bought)? $",
                      "Please enter a number more than 0\n",
                      float)
 
-print("You need: {} {}".format(get_int, measurement_type))
-print("It costs: ${}".format(get_cost))
+get_amount = num_check("How much are you using in the recipe? ",
+                       "Please enter an amount more than 0\n",
+                       float)
+# to get the price
+get_price = get_cost / get_int * get_amount
+
+print("You need: {} {}".format(get_amount, measurement_type))
+print("It costs: ${:.2f}".format(get_price))
