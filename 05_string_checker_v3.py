@@ -46,6 +46,9 @@ get_int = num_check("How much did you get of this ingredient? ",
                     "Please enter an amount more than 0\n",
                     float)
 
+measurement_type2 = string_checker("What measurement is your ingredient in? (grams / kilograms)", 2,
+                                   measurement_list)
+
 get_cost = num_check("How much does it cost (for the amount you bought)? $",
                      "Please enter a number more than 0\n",
                      float)
