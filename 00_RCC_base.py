@@ -81,6 +81,7 @@ def currency(x):
 
 # *** functions go here ***
 
+
 # list
 yes_no_list = ["yes", "no"]
 texture_list = ["dry", "wet"]
@@ -94,6 +95,11 @@ measurement_list_wet = {
     "millilitres": "ml",
     "litres": "l"
 }
+# ask user if they want to see the instructions
+want_instructions = string_checker("do you want to read the instructions (y/n)?: ", yes_no_list)
+
+if want_instructions == "yes":
+    print(show_instructions())
 
 # get ingredient name
 ingredient_name = not_blank("Ingredient: ", "The component can't be blank.")
@@ -117,6 +123,8 @@ def recipe_cost_calculator():
     else:
         print("Invalid input. Please enter 'wet' or 'dry'.")
 
+
+# main routine goes here
 
 # Call the function to start the recipe cost calculator
 recipe_cost_calculator()
