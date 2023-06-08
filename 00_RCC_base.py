@@ -101,12 +101,6 @@ want_instructions = string_checker("do you want to read the instructions (y/n)?:
 if want_instructions == "yes":
     print(show_instructions())
 
-# get ingredient name
-ingredient_name = not_blank("Ingredient: ", "The component can't be blank.")
-wet_measurement = ""
-dry_measurement = ""
-
-
 def recipe_cost_calculator():
     global wet_measurement, dry_measurement
 
@@ -125,6 +119,14 @@ def recipe_cost_calculator():
 
 
 # main routine goes here
+
+# get product name
+recipe_name = not_blank("Recipe name: ", "The recipe name can't be blank.")
+
+# get ingredient name
+ingredient_name = not_blank("Ingredient: ", "The component can't be blank.")
+wet_measurement = ""
+dry_measurement = ""
 
 # Call the function to start the recipe cost calculator
 recipe_cost_calculator()
