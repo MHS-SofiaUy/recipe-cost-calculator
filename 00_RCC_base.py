@@ -120,7 +120,7 @@ def recipe_cost_calculator():
 
 # main routine goes here
 
-# get product name
+# get recipe name
 recipe_name = not_blank("Recipe name: ", "The recipe name can't be blank.")
 
 # get ingredient name

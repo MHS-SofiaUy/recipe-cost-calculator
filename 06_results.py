@@ -153,7 +153,9 @@ while ingredient_name.lower() != "xxx":
 
 
 # to get the price
-get_price = get_cost / get_int * get_amount
+get_serving = ("How many servings are you making? ", num_check)
+get_price00 = get_cost / get_int * get_amount
+get_price = get_price00 / get_serving
 
 
 # main routine goes here
@@ -162,7 +164,7 @@ get_price = get_cost / get_int * get_amount
 
 # calculating the price
 print("----- {} -----".format(recipe_name))
-print("{} - ${}".format(ingredient_name, get_price))
+print("{} - ${}".format(ingredient_name, get_price), float)
 
 
 
