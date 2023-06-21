@@ -160,8 +160,6 @@ get_price = get_price00 / get_serving
 
 # main routine goes here
 
-
-
 # calculating the price
 print("----- {} -----".format(recipe_name))
 print("{} - ${}".format(ingredient_name, get_price))
