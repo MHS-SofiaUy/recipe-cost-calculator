@@ -149,6 +149,7 @@ while ingredient_name.lower() != "xxx":
     get_cost = num_check("How much does it cost (for the amount you bought)? $", "Please enter a number more than 0\n",
                         float)
     get_amount = num_check("How much are you using in the recipe? ", "Please enter an amount more than 0\n", float)
+    get_price00 = get_cost / get_int * get_amount
         
 
 
