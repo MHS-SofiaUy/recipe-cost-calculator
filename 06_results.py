@@ -112,6 +112,7 @@ recipe_name = not_blank("Recipe name: ", "The recipe name can't be blank.")
 
 # loop to get component, quantity and price
 ingredient_name = ""
+get_ingredientprice = 0
 while ingredient_name.lower() != "xxx":
     # get ingredient name
     ingredient_name = not_blank("\nIngredient: ", "The component can't be blank.")
@@ -135,6 +136,18 @@ while ingredient_name.lower() != "xxx":
     wet_measurement = ""
     dry_measurement = ""
 
+    # lists to hold ingredient details
+    all_ingredients = []
+    all_ingredient_name = []
+    all_price = []
+
+    # Dictionary used to create data frame ie: column_name:list
+    recipe_cost_dict = {
+        "ingredients": all_ingredients,
+        "ingredient name": all_ingredient_name,
+        "price": all_price
+    }
+
     # Call the function to start the recipe cost calculator
     recipe_cost_calculator()
 
@@ -148,28 +161,51 @@ while ingredient_name.lower() != "xxx":
     get_int = num_check("How much did you get of this ingredient? ", "Please enter an amount more than 0\n", float)
     get_cost = num_check("How much does it cost (for the amount you bought)? $", "Please enter a number more than 0\n",
                         float)
-    get_amount = num_check("How much are you using in the recipe? ", "Please enter an amount more than 0\n", float)
-    
-    # information systems
-    get_price00 = get_cost / get_int * get_amount
-    to_write = [ingredients]
-    ingredients = ("{} - ${}".format(ingredient_name, get_price00))
+    price = num_check("How much are you using in the recipe? ", "Please enter an amount more than 0\n", float)
 
-        
+    # Create strings for printing...
+    ingredients = ("{} - ${}".format(ingredient_name, all_price))
+
+    # add ingredients to lists
+    all_ingredients.append(ingredients)
+    all_ingredient_name.append(ingredient_name)
+    all_price.append(price)
+
+# create data frame from dictionary to organise information
+recipe_cost_frame = pandas.DataFrame(recipe_cost_dict)
+  
 
 
 # to get the price
 get_serving = num_check("How many servings are you making? ", "Please enter an amount more than 0\n", float)
-get_price = get_price00 / get_serving
+
+# calculating the price
+get_totalprice = price / get_serving
 
 
 # main routine goes here
-
-# calculating the price
-print("----- {} -----".format(recipe_name))
+total_cost = ("It costs: ${:.2f}".format(get_totalprice))
 
 
+recipe = ("----- {} -----".format(recipe_name))
+
+# list holding content to print / write to file
+to_write = [recipe, all_ingredients, total_cost]
+
+# print output
+for item in to_write:
+    print(item)
+
+text_file = open("RCC_ingredients.txt", "w+")
+
+for item in to_write:
+    text_file.write(item)
+    text_file.write("\n")
+
+# close file
+text_file.close()
 
 
 
-print("It costs: ${:.2f}".format(get_price))
+
+
