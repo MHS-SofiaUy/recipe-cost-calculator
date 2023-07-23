@@ -138,14 +138,16 @@ while ingredient_name.lower() != "xxx":
 
     # lists to hold ingredient details
     all_ingredients = []
-    all_ingredient_name = []
+    all_amount = []
     all_price = []
+    all_cost = []
 
     # Dictionary used to create data frame ie: column_name:list
     recipe_cost_dict = {
         "ingredients": all_ingredients,
-        "ingredient name": all_ingredient_name,
-        "price": all_price
+        "amount": all_amount,
+        "price": all_price,
+        "cost": all_cost
     }
 
     # Call the function to start the recipe cost calculator
@@ -158,39 +160,54 @@ while ingredient_name.lower() != "xxx":
     else:
         print("Invalid input. Please try again.")
 
-    get_int = num_check("How much did you get of this ingredient? ", "Please enter an amount more than 0\n", float)
-    get_cost = num_check("How much does it cost (for the amount you bought)? $", "Please enter a number more than 0\n",
+    amount = num_check("How much did you get of this ingredient? ", "Please enter an amount more than 0\n", float)
+    cost = num_check("How much does it cost (for the amount you bought)? $", "Please enter a number more than 0\n",
                         float)
     price = num_check("How much are you using in the recipe? ", "Please enter an amount more than 0\n", float)
 
     # Create strings for printing...
-    ingredients = ("{} - ${}".format(ingredient_name, all_price))
+    ingredients = ("{} - ${}".format(ingredient_name, price))
 
     # add ingredients to lists
     all_ingredients.append(ingredients)
-    all_ingredient_name.append(ingredient_name)
+    all_amount.append(amount)
     all_price.append(price)
+    all_cost.append(cost)
 
-# create data frame from dictionary to organise information
-recipe_cost_frame = pandas.DataFrame(recipe_cost_dict)
-  
-
+# main routine goes here
 
 # to get the price
 get_serving = num_check("How many servings are you making? ", "Please enter an amount more than 0\n", float)
 
 # calculating the price
-get_totalprice = price / get_serving
+totalprice = price / get_serving
 
 
-# main routine goes here
-total_cost = ("It costs: ${:.2f}".format(get_totalprice))
+all_cost = ("It costs: ${:.2f}".format(totalprice))
 
+# create panda data frame from dictionary to organise information
+recipe_cost_frame = pandas.DataFrame(recipe_cost_dict)
 
+# list all the ingredients
+recipe_cost_frame['Recipe Ingredients'] = recipe_cost_frame['ingredients'] + recipe_cost_frame['price']
+
+# calculate the prices per serving
+recipe_cost_frame['Price per Cost'] = recipe_cost_frame['price'] + recipe_cost_frame[totalprice]
+
+# calculate
+recipeingredients = recipe_cost_frame['Recipe Ingredients']
+pricepercost = recipe_cost_frame['Price per Cost']
+
+# set index before printing
+recipe_cost_calculator = recipe_cost_calculator.set_index('Name')
+
+# print
+print(recipe_cost_calculator)
+# print out ingredients
 recipe = ("----- {} -----".format(recipe_name))
 
 # list holding content to print / write to file
-to_write = [recipe, all_ingredients, total_cost]
+to_write = [recipe, recipeingredients, pricepercost, all_cost]
 
 # print output
 for item in to_write:
