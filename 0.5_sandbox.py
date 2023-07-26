@@ -79,15 +79,18 @@ def currency(x):
 # import libraries
 # CHATGPT
 
-def recipe_cost_calculator(ingredient_type):
-    ingredient_type = string_checker("Is the ingredient wet or dry? ", texture_list)
+def ingredient_texture(ingredient_type):
+    global wet_measurement, dry_measurement
+    texture_list = {
+        "dry": "d", 
+        "wet": "w"}
 
     if ingredient_type == "wet":
-        string_checker = wet_measurement ("Is the measurement in ml or l? ", measurement_list_wet)
+        wet_measurement = string_checker("Is the measurement in ml or l? ", measurement_list_wet)
         # Rest of the code for wet ingredient calculation
         # ...
     elif ingredient_type == "dry":
-        string_checker = dry_measurement ("Is the measurement in g or kg? ", measurement_list)
+        dry_measurement = string_checker("Is the measurement in g or kg? ", measurement_list)
         # Rest of the code for dry ingredient calculation
         # ...
     else:
@@ -148,7 +151,8 @@ while ingredient_name.lower() != "xxx":
         "cost": all_cost
     }
 
-    recipe_cost_calculator(ingredient_type= "")
+    # Call the function to start the recipe cost calculator
+    ingredient_type = ingredient_texture("Is the ingredient wet or dry? ")
 
     if wet_measurement:
         measurement_unit = measurement_list_wet[wet_measurement]
@@ -196,7 +200,7 @@ recipeingredients = recipe_cost_frame['Recipe Ingredients']
 pricepercost = recipe_cost_frame['Price per Cost']
 
 # set index before printing
-recipe_cost_calculator = recipe_cost_calculator.set_index('Name')
+recipe_cost_calculator = ingredient_texture.set_index('Name')
 
 # print
 print(recipe_cost_calculator)
