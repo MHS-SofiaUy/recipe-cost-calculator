@@ -80,17 +80,14 @@ def currency(x):
 # CHATGPT
 
 def ingredient_texture(ingredient_type):
-    global wet_measurement, dry_measurement
-    texture_list = {
-        "dry": "d", 
-        "wet": "w"}
+    ingredient_type = "wet", "dry"
 
     if ingredient_type == "wet":
-        wet_measurement = string_checker("Is the measurement in ml or l? ", measurement_list_wet)
+        measurement_unit = string_checker("Is the measurement in ml or l? ", measurement_list_wet)
         # Rest of the code for wet ingredient calculation
         # ...
     elif ingredient_type == "dry":
-        dry_measurement = string_checker("Is the measurement in g or kg? ", measurement_list)
+        measurement_unit = string_checker("Is the measurement in g or kg? ", measurement_list)
         # Rest of the code for dry ingredient calculation
         # ...
     else:
@@ -100,7 +97,6 @@ def ingredient_texture(ingredient_type):
 
 # list
 yes_no_list = ["yes", "no"]
-texture_list = ["dry", "wet"]
 
 # ask user if they want to see the instructions
 want_instructions = string_checker("do you want to read the instructions (y/n)?: ", yes_no_list)
@@ -132,10 +128,12 @@ while ingredient_name.lower() != "xxx":
         "litres": "l"
     }
 
-    # get
-    measurement_unit = ""
-    wet_measurement = ""
-    dry_measurement = ""
+    # dictionaries for texture
+    texture_list = {
+        "dry": "d",
+        "wet": "w"
+    }
+
 
     # lists to hold ingredient details
     all_ingredients = []
@@ -151,23 +149,23 @@ while ingredient_name.lower() != "xxx":
         "cost": all_cost
     }
 
-    # Call the function to start the recipe cost calculator
-    ingredient_type = ingredient_texture("Is the ingredient wet or dry? ")
+    # ask for units depending on texture of ingredients
+    measurement_unit = ""
 
-    if wet_measurement:
-        measurement_unit = measurement_list_wet[wet_measurement]
-    elif dry_measurement:
-        measurement_unit = measurement_list[dry_measurement]
+    # ask for ingredient texture
+    ingredient_type = ("Is the ingredient wet or dry? ")
+    if ingredient_type == "wet":
+        measurement_unit = measurement_list_wet
+    elif ingredient_type == "dry":
+        measurement_unit = measurement_list
     else:
         print("Invalid input. Please try again.")
-
+    
     amount = num_check("How much did you get of this ingredient? ", "Please enter an amount more than 0\n", float)
     cost = num_check("How much does it cost (for the amount you bought)? $", "Please enter a number more than 0\n",
                         float)
     price = num_check("How much are you using in the recipe? ", "Please enter an amount more than 0\n", float)
-
-    # Create strings for printing...
-    ingredients = ("{} - ${}".format(ingredient_name, price))
+    ingredients = ingredient_name
 
     # add ingredients to lists
     all_ingredients.append(ingredients)
@@ -184,10 +182,11 @@ get_serving = num_check("How many servings are you making? ", "Please enter an a
 totalprice = price / get_serving
 
 
-all_cost = ("It costs: ${:.2f}".format(totalprice))
+total_costs = ("It costs: ${:.2f}".format(totalprice))
 
 # create panda data frame from dictionary to organise information
 recipe_cost_frame = pandas.DataFrame(recipe_cost_dict)
+print(recipe_cost_frame)
 
 # list all the ingredients
 recipe_cost_frame['Recipe Ingredients'] = recipe_cost_frame['ingredients'] + recipe_cost_frame['price']
@@ -208,7 +207,7 @@ print(recipe_cost_calculator)
 recipe = ("----- {} -----".format(recipe_name))
 
 # list holding content to print / write to file
-to_write = [recipe, recipeingredients, pricepercost, all_cost]
+to_write = [recipe, recipeingredients, pricepercost, total_costs]
 
 # print output
 for item in to_write:

@@ -183,10 +183,11 @@ get_serving = num_check("How many servings are you making? ", "Please enter an a
 totalprice = price / get_serving
 
 
-all_cost = ("It costs: ${:.2f}".format(totalprice))
+total_costs = ("It costs: ${:.2f}".format(totalprice))
 
 # create panda data frame from dictionary to organise information
 recipe_cost_frame = pandas.DataFrame(recipe_cost_dict)
+print(recipe_cost_frame)
 
 # list all the ingredients
 recipe_cost_frame['Recipe Ingredients'] = recipe_cost_frame['ingredients'] + recipe_cost_frame['price']
@@ -207,7 +208,7 @@ print(recipe_cost_calculator)
 recipe = ("----- {} -----".format(recipe_name))
 
 # list holding content to print / write to file
-to_write = [recipe, recipeingredients, pricepercost, all_cost]
+to_write = [recipe, recipeingredients, pricepercost, total_costs]
 
 # print output
 for item in to_write:
