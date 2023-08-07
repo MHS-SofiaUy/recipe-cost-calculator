@@ -141,17 +141,19 @@ while ingredient_name.lower() != "xxx":
     all_amount = []
     all_price = []
     all_cost = []
+    all_unit = []
 
     # Dictionary used to create data frame ie: column_name:list
     recipe_cost_dict = {
         "ingredients": all_ingredients,
         "amount": all_amount,
         "price": all_price,
-        "cost": all_cost
+        "cost": all_cost,
+        "unit": all_unit
     }
 
     # Call the function to start the recipe cost calculator
-    recipe_cost_calculator()
+    unit = recipe_cost_calculator()
 
     if wet_measurement:
         measurement_unit = measurement_list_wet[wet_measurement]
@@ -165,14 +167,15 @@ while ingredient_name.lower() != "xxx":
                         float)
     price = num_check("How much are you using in the recipe? ", "Please enter an amount more than 0\n", float)
 
-    # Create strings for printing...
-    ingredients = ("{} - ${}".format(ingredient_name, price))
+    # collecting ingredient name
+    ingredients = (ingredient_name)
 
-    # add ingredients to lists
+    # add to list in order to print out
     all_ingredients.append(ingredients)
     all_amount.append(amount)
     all_price.append(price)
     all_cost.append(cost)
+    all_unit.append(unit)
 
 # main routine goes here
 
@@ -202,26 +205,8 @@ pricepercost = recipe_cost_frame['Price per Cost']
 # set index before printing
 recipe_cost_calculator = recipe_cost_calculator.set_index('Name')
 
-# print
-print(recipe_cost_calculator)
 # print out ingredients
 recipe = ("----- {} -----".format(recipe_name))
-
-# list holding content to print / write to file
-to_write = [recipe, recipeingredients, pricepercost, total_costs]
-
-# print output
-for item in to_write:
-    print(item)
-
-text_file = open("RCC_ingredients.txt", "w+")
-
-for item in to_write:
-    text_file.write(item)
-    text_file.write("\n")
-
-# close file
-text_file.close()
 
 
 

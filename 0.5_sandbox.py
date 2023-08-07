@@ -75,28 +75,43 @@ def not_blank(question, error):
 def currency(x):
     return "${:.2f}".format(x)
 
-
-# import libraries
-# CHATGPT
-
-def ingredient_texture(ingredient_type):
-    ingredient_type = "wet", "dry"
-
-    if ingredient_type == "wet":
-        measurement_unit = string_checker("Is the measurement in ml or l? ", measurement_list_wet)
-        # Rest of the code for wet ingredient calculation
-        # ...
-    elif ingredient_type == "dry":
-        measurement_unit = string_checker("Is the measurement in g or kg? ", measurement_list)
-        # Rest of the code for dry ingredient calculation
-        # ...
-    else:
-        print("Invalid input. Please enter 'wet' or 'dry'.")
+# main routine goes here
 
 # *** functions go here ***
 
 # list
 yes_no_list = ["yes", "no"]
+texture_list = ["solid", "liquid"]
+
+# dictionaries for units
+measurement_list = {
+    "g",
+    "kg",
+}
+measurement_list_wet = {
+    "ml",
+    "l"
+}
+
+# lists to hold ingredient details
+all_ingredients = []
+all_amount = []
+all_price = []
+all_cost = []
+all_unit = []
+all_texture = []
+all_needed = []
+
+# Dictionary used to create data frame ie: column_name:list
+recipe_cost_dict = {
+    "ingredients": all_ingredients,
+    "amount": all_amount,
+    "price": all_price,
+    "cost": all_cost,
+    "unit": all_unit,
+    "texture": all_texture,
+    "needed": all_needed
+}
 
 # ask user if they want to see the instructions
 want_instructions = string_checker("do you want to read the instructions (y/n)?: ", yes_no_list)
@@ -104,123 +119,95 @@ want_instructions = string_checker("do you want to read the instructions (y/n)?:
 if want_instructions == "yes":
     print(show_instructions())
 
+# set maximum number of ingredients below
+MAX_INGREDIENTS = 99
+ingredients_listed = 0
+
 # get recipe name
 recipe_name = not_blank("Recipe name: ", "The recipe name can't be blank.")
 
 # loop to get component, quantity and price
-ingredient_name = ""
+# ingredient_name = ""
 get_ingredientprice = 0
-while ingredient_name.lower() != "xxx":
+while ingredients_listed < MAX_INGREDIENTS:
     # get ingredient name
-    ingredient_name = not_blank("\nIngredient: ", "The component can't be blank.")
+    ingredients = not_blank("\nIngredient: ", "The component can't be blank.")
+
+    if ingredients == 'xxx' and len(all_ingredients) > 0:
+        break
+    elif ingredients == 'xxx':
+        print("You must write down at least ONE ingredient before quitting")
+        continue
 
     # if
-    if ingredient_name.lower() == "xxx":
+    #if ingredient_name.lower() == "xxx":
         break
 
-    # dictionaries for units
-    measurement_list = {
-        "grams": "g",
-        "kilograms": "kg"
-    }
-    measurement_list_wet = {
-        "millilitres": "ml",
-        "litres": "l"
-    }
+    texture = string_checker("Is the ingredient a liquid or solid? ", texture_list)
+    if texture == "liquid":
+        unit = string_checker("Is the measurement in ml or l? ", measurement_list_wet)
 
-    # dictionaries for texture
-    texture_list = {
-        "dry": "d",
-        "wet": "w"
-    }
+    elif texture == "solid":
+        unit = string_checker("Is the measurement in g or kg? ", measurement_list)
 
-
-    # lists to hold ingredient details
-    all_ingredients = []
-    all_amount = []
-    all_price = []
-    all_cost = []
-
-    # Dictionary used to create data frame ie: column_name:list
-    recipe_cost_dict = {
-        "ingredients": all_ingredients,
-        "amount": all_amount,
-        "price": all_price,
-        "cost": all_cost
-    }
-
-    # ask for units depending on texture of ingredients
-    measurement_unit = ""
-
-    # ask for ingredient texture
-    ingredient_type = ("Is the ingredient wet or dry? ")
-    if ingredient_type == "wet":
-        measurement_unit = measurement_list_wet
-    elif ingredient_type == "dry":
-        measurement_unit = measurement_list
     else:
-        print("Invalid input. Please try again.")
-    
-    amount = num_check("How much did you get of this ingredient? ", "Please enter an amount more than 0\n", float)
-    cost = num_check("How much does it cost (for the amount you bought)? $", "Please enter a number more than 0\n",
-                        float)
-    price = num_check("How much are you using in the recipe? ", "Please enter an amount more than 0\n", float)
-    ingredients = ingredient_name
+        print("Invalid input. Please enter 'wet' or 'dry'.")
 
-    # add ingredients to lists
+    amount = num_check("How much did you get of this ingredient ({})? ".format(unit), "Please enter an amount more than 0\n", float)
+    cost = num_check("How much does it cost (for the amount you bought)? $", "Please enter a number more than 0\n",float)
+    price = num_check("How much are you using in the recipe ({})? ".format(unit), "Please enter an amount more than 0\n", float)
+
+    # cost needed for AMOUNT of ingredients USED in recipe
+    needed1 = cost / amount
+    needed = needed1 * price
+
+    ingredients_listed += 1
+
+    # add to list in order to print out
     all_ingredients.append(ingredients)
     all_amount.append(amount)
     all_price.append(price)
     all_cost.append(cost)
+    all_unit.append(unit)
+    all_texture.append(texture)
+    all_needed.append(needed)
 
-# main routine goes here
+# create panda data frame from dictionary to organise information
+recipe_cost_frame = pandas.DataFrame(recipe_cost_dict)
+
+# print out recipe name
+recipe = ("----- {} -----".format(recipe_name))
 
 # to get the price
 get_serving = num_check("How many servings are you making? ", "Please enter an amount more than 0\n", float)
 
 # calculating the price
-totalprice = price / get_serving
+totalprice = ("Total Price: ${:.2f}".format(sum(all_needed)))
+# recipe_cost_frame['Total_Price'] = totalprice
+# recipe_cost_frame['Price per serve'] = recipe_cost_frame['Total_Price'] / get_serving
 
+per_serve = sum(all_needed) / get_serving
+cost_per_serve = ("Costs per serve: ${:.2f}".format(per_serve))
 
-total_costs = ("It costs: ${:.2f}".format(totalprice))
-
-# create panda data frame from dictionary to organise information
-recipe_cost_frame = pandas.DataFrame(recipe_cost_dict)
+print(recipe)
 print(recipe_cost_frame)
+print(totalprice)
+print(cost_per_serve)
 
 # list all the ingredients
-recipe_cost_frame['Recipe Ingredients'] = recipe_cost_frame['ingredients'] + recipe_cost_frame['price']
+# recipe_cost_frame['Recipe Ingredients'] = recipe_cost_frame['ingredients'] + recipe_cost_frame['price']
 
 # calculate the prices per serving
-recipe_cost_frame['Price per Cost'] = recipe_cost_frame['price'] + recipe_cost_frame[totalprice]
+# recipe_cost_frame['Price per Cost'] = recipe_cost_frame['price'] + recipe_cost_frame[totalprice]
 
 # calculate
-recipeingredients = recipe_cost_frame['Recipe Ingredients']
-pricepercost = recipe_cost_frame['Price per Cost']
+# recipeingredients = recipe_cost_frame['Recipe Ingredients']
+# pricepercost = recipe_cost_frame['Price per Cost']
 
 # set index before printing
-recipe_cost_calculator = ingredient_texture.set_index('Name')
+# recipe_cost_calculator = recipe_cost_calculator.set_index('Name')
 
-# print
-print(recipe_cost_calculator)
-# print out ingredients
-recipe = ("----- {} -----".format(recipe_name))
 
-# list holding content to print / write to file
-to_write = [recipe, recipeingredients, pricepercost, total_costs]
-
-# print output
-for item in to_write:
-    print(item)
-
-text_file = open("RCC_ingredients.txt", "w+")
-
-for item in to_write:
-    text_file.write(item)
-    text_file.write("\n")
-
-# close file
-text_file.close()
 
 
 

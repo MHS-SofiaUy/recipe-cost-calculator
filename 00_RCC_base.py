@@ -21,9 +21,6 @@ with subtotals for the variable and fixed costs.
 Finally it will tell you how much you should use of 
 each item for you to reach your serving goal.
 
-The data will also be written to a text file which
-has the same name as your recipe.
-
 **** Program Launched! ****''')
 
 
@@ -75,82 +72,141 @@ def not_blank(question, error):
 def currency(x):
     return "${:.2f}".format(x)
 
-
-# import libraries
-# CHATGPT
+# main routine goes here
 
 # *** functions go here ***
 
-
 # list
 yes_no_list = ["yes", "no"]
-texture_list = ["dry", "wet"]
+texture_list = ["solid", "liquid"]
 
 # dictionaries for units
 measurement_list = {
-    "grams": "g",
-    "kilograms": "kg"
+    "g",
+    "kg",
 }
 measurement_list_wet = {
-    "millilitres": "ml",
-    "litres": "l"
+    "ml",
+    "l"
 }
+
+# lists to hold ingredient details
+all_ingredients = []
+all_amount = []
+all_using = []
+all_cost = []
+all_unit = []
+all_texture = []
+all_needed = []
+
+# Dictionary used to create data frame ie: column_name:list
+recipe_cost_dict = {
+    "ingredients": all_ingredients,
+    "amount": all_amount,
+    "using": all_using,
+    "cost": all_cost,
+    "unit": all_unit,
+    "texture": all_texture,
+    "needed": all_needed
+}
+
 # ask user if they want to see the instructions
 want_instructions = string_checker("do you want to read the instructions (y/n)?: ", yes_no_list)
 
 if want_instructions == "yes":
     print(show_instructions())
 
-def recipe_cost_calculator():
-    global wet_measurement, dry_measurement
-
-    ingredient_type = string_checker("Is the ingredient wet or dry? ", texture_list)
-
-    if ingredient_type == "wet":
-        wet_measurement = string_checker("Is the measurement in ml or l? ", measurement_list_wet)
-        # Rest of the code for wet ingredient calculation
-        # ...
-    elif ingredient_type == "dry":
-        dry_measurement = string_checker("Is the measurement in g or kg? ", measurement_list)
-        # Rest of the code for dry ingredient calculation
-        # ...
-    else:
-        print("Invalid input. Please enter 'wet' or 'dry'.")
-
-
-# main routine goes here
+# set maximum number of ingredients below
+MAX_INGREDIENTS = 99
+ingredients_listed = 0
 
 # get recipe name
 recipe_name = not_blank("Recipe name: ", "The recipe name can't be blank.")
 
-# get ingredient name
-ingredient_name = not_blank("Ingredient: ", "The component can't be blank.")
-wet_measurement = ""
-dry_measurement = ""
+# loop to get component, quantity and price
+# ingredient_name = ""
+get_ingredientprice = 0
+while ingredients_listed < MAX_INGREDIENTS:
+    # get ingredient name
+    ingredients = not_blank("\nIngredient: ", "The component can't be blank.")
 
-# Call the function to start the recipe cost calculator
-recipe_cost_calculator()
+    if ingredients == 'xxx' and len(all_ingredients) > 0:
+        break
+    elif ingredients == 'xxx':
+        print("You must write down at least ONE ingredient before quitting")
+        continue
 
-get_int = num_check("How much did you get of this ingredient? ", "Please enter an amount more than 0\n", float)
-get_cost = num_check("How much does it cost (for the amount you bought)? $", "Please enter a number more than 0\n",
-                     float)
-get_amount = num_check("How much are you using in the recipe? ", "Please enter an amount more than 0\n", float)
+    # if
+    #if ingredient_name.lower() == "xxx":
+        break
+
+    texture = string_checker("Is the ingredient a liquid or solid? ", texture_list)
+    if texture == "liquid":
+        unit = string_checker("Is the measurement in ml or l? ", measurement_list_wet)
+
+    elif texture == "solid":
+        unit = string_checker("Is the measurement in g or kg? ", measurement_list)
+
+    else:
+        print("Invalid input. Please enter 'wet' or 'dry'.")
+
+    amount = num_check("How much did you get of this ingredient ({})? ".format(unit), "Please enter an amount more than 0\n", float)
+    cost = num_check("How much does it cost (for the amount you bought)? $", "Please enter a number more than 0\n",float)
+    using = num_check("How much are you using in the recipe ({})? ".format(unit), "Please enter an amount more than 0\n", float)
+
+    # cost needed for AMOUNT of ingredients USED in recipe
+    needed1 = cost / amount
+    needed = needed1 * using
+
+    ingredients_listed += 1
+
+    # add to list in order to print out
+    all_ingredients.append(ingredients)
+    all_amount.append(amount)
+    all_using.append(using)
+    all_cost.append(cost)
+    all_unit.append(unit)
+    all_texture.append(texture)
+    all_needed.append(needed)
+
+# create panda data frame from dictionary to organise information
+recipe_cost_frame = pandas.DataFrame(recipe_cost_dict)
+
+# print out recipe name
+recipe = ("----- {} -----".format(recipe_name))
 
 # to get the price
-get_price = get_cost / get_int * get_amount
+get_serving = num_check("How many servings are you making? ", "Please enter an amount more than 0\n", float)
 
-measurement_unit = ""
+# calculating the price
+totalprice = ("Total Price: ${:.2f}".format(sum(all_needed)))
+# recipe_cost_frame['Total_Price'] = totalprice
+# recipe_cost_frame['Price per serve'] = recipe_cost_frame['Total_Price'] / get_serving
 
-if wet_measurement:
-    measurement_unit = measurement_list_wet[wet_measurement]
-elif dry_measurement:
-    measurement_unit = measurement_list[dry_measurement]
-else:
-    print("Invalid input. Please try again.")
+per_serve = sum(all_needed) / get_serving
+cost_per_serve = ("Costs per serve: ${:.2f}".format(per_serve))
 
-if measurement_unit:
-    print("You need: {}{}".format(get_amount, measurement_unit))
-else:
-    print("Invalid input. Please try again.")
+print(recipe)
+print(recipe_cost_frame)
+print(totalprice)
+print(cost_per_serve)
 
-print("It costs: ${:.2f}".format(get_price))
+# list all the ingredients
+# recipe_cost_frame['Recipe Ingredients'] = recipe_cost_frame['ingredients'] + recipe_cost_frame['price']
+
+# calculate the prices per serving
+# recipe_cost_frame['Price per Cost'] = recipe_cost_frame['price'] + recipe_cost_frame[totalprice]
+
+# calculate
+# recipeingredients = recipe_cost_frame['Recipe Ingredients']
+# pricepercost = recipe_cost_frame['Price per Cost']
+
+# set index before printing
+# recipe_cost_calculator = recipe_cost_calculator.set_index('Name')
+
+
+
+
+
+
+
