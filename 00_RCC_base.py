@@ -84,10 +84,14 @@ texture_list = ["solid", "liquid"]
 measurement_list = {
     "g",
     "kg",
+    "grams",
+    "kilograms"
 }
 measurement_list_wet = {
     "ml",
-    "l"
+    "l",
+    "millilitres",
+    "litres",
 }
 
 # lists to hold ingredient details
@@ -136,16 +140,12 @@ while ingredients_listed < MAX_INGREDIENTS:
         print("You must write down at least ONE ingredient before quitting")
         continue
 
-    # if
-    #if ingredient_name.lower() == "xxx":
-        break
-
     texture = string_checker("Is the ingredient a liquid or solid? ", texture_list)
     if texture == "liquid":
-        unit = string_checker("Is the measurement in ml or l? ", measurement_list_wet)
+        unit = string_checker("Is the measurement in millilitres (ml) or litres (l)? ", measurement_list_wet)
 
     elif texture == "solid":
-        unit = string_checker("Is the measurement in g or kg? ", measurement_list)
+        unit = string_checker("Is the measurement in grams (g) or kilograms (kg)? ", measurement_list)
 
     else:
         print("Invalid input. Please enter 'wet' or 'dry'.")
@@ -175,34 +175,23 @@ recipe_cost_frame = pandas.DataFrame(recipe_cost_dict)
 # print out recipe name
 recipe = ("----- {} -----".format(recipe_name))
 
-# to get the price
+# asking the user for the amount of servings that are being made
 get_serving = num_check("How many servings are you making? ", "Please enter an amount more than 0\n", float)
 
-# calculating the price
+# calculating the price for all ingredients being used in the recipe
 totalprice = ("Total Price: ${:.2f}".format(sum(all_needed)))
-# recipe_cost_frame['Total_Price'] = totalprice
-# recipe_cost_frame['Price per serve'] = recipe_cost_frame['Total_Price'] / get_serving
 
+# calculating the costs per serve
 per_serve = sum(all_needed) / get_serving
 cost_per_serve = ("Costs per serve: ${:.2f}".format(per_serve))
 
+# print out recipe, amount and cost details
 print(recipe)
 print(recipe_cost_frame)
 print(totalprice)
 print(cost_per_serve)
 
-# list all the ingredients
-# recipe_cost_frame['Recipe Ingredients'] = recipe_cost_frame['ingredients'] + recipe_cost_frame['price']
 
-# calculate the prices per serving
-# recipe_cost_frame['Price per Cost'] = recipe_cost_frame['price'] + recipe_cost_frame[totalprice]
-
-# calculate
-# recipeingredients = recipe_cost_frame['Recipe Ingredients']
-# pricepercost = recipe_cost_frame['Price per Cost']
-
-# set index before printing
-# recipe_cost_calculator = recipe_cost_calculator.set_index('Name')
 
 
 
